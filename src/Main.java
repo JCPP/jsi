@@ -1,6 +1,6 @@
 /**
  * 
- * @author <a href="">Wanted.92</a>
+ * @author <a href="https://github.com/Wanted92">Wanted.92</a>
  *
  */
 public class Main {
