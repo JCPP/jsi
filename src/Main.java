@@ -1,5 +1,5 @@
 /**
- * 
+ * Main class of the project.
  * @author <a href="https://github.com/Wanted92">Wanted.92</a>
  *
  */
