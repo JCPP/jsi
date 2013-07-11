@@ -2,34 +2,5 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/AppleJavaExtensions.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-animation-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-archetype-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-awt-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-collada-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-core-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-effects-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-extras-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-jogl-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-lwjgl-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-math-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-savable-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-swt-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-terrain-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/ardor3d-ui-0.8.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/asm-debug-all.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/guava-14.0.1.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/jinput.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/lwjgl.jar">
-		<attributes>
-			<attribute name="javadoc_location" value="file:/C:/Users/Matteo/git/jsi/lib/doc/"/>
-			<attribute name="org.eclipse.jdt.launching.CLASSPATH_ATTR_LIBRARY_PATH_ENTRY" value="C:/Users/Matteo/git/jsi/lib/natives-win"/>
-		</attributes>
-	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/lwjgl_test.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/lwjgl_util.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/lwjgl_util_applet.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/lwjgl-debug.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Matteo/git/jsi/lib/jars/lzma.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
