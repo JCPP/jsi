@@ -28,9 +28,10 @@ import javax.swing.JPanel;
  * appropriate game actions.
  * 
  * @author Kevin Glass
+ * @author Davide Pastore
  */
 public class Game extends Canvas {
-	/** The stragey that allows us to use accelerate page flipping */
+	/** The strategy that allows us to use accelerate page flipping */
 	private BufferStrategy strategy;
 	/** True if the game is currently "running", i.e. the game loop is looping */
 	private boolean gameRunning = true;
@@ -48,6 +49,12 @@ public class Game extends Canvas {
 	private long firingInterval = 500;
 	/** The number of aliens left on the screen */
 	private int alienCount;
+	/** The second in which the game is running */
+	private long second;
+	/** The frame rate */
+	private int frameRate;
+	/** The frame rate per second */
+	private int frameRatePerSecond;
 	
 	/** The message to display which waiting for a key press */
 	private String message = "";
@@ -61,6 +68,8 @@ public class Game extends Canvas {
 	private boolean firePressed = false;
 	/** True if game logic needs to be applied this loop, normally as a result of a game event */
 	private boolean logicRequiredThisLoop = false;
+	/** True if a second has passed and we have to show the frame rate. */
+	private boolean showFrameRate = false;
 	
 	/**
 	 * Construct our game and set it running.
@@ -219,8 +228,34 @@ public class Game extends Canvas {
 		
 		// if we waited long enough, create the shot entity, and record the time.
 		lastFire = System.currentTimeMillis();
-		ShotEntity shot = new ShotEntity(this,"sprites/shot.gif",ship.getX()+10,ship.getY()-30);
+		ShotEntity shot = new ShotEntity(this, "sprites/shot.gif", ship.getX() + 10, ship.getY() - 30);
 		entities.add(shot);
+	}
+	
+	/**
+	 * Set the frame rate.
+	 * @param currentTimeMillis the current milliseconds time.
+	 */
+	public void handleFrameRate(long currentTimeMillis, Graphics2D g){
+		if(currentTimeMillis/1000 != second){
+			frameRatePerSecond = frameRate;
+			
+			// reload the frame rate and second
+			frameRate = 1;
+			second = currentTimeMillis/1000;
+		}
+		else{
+			frameRate++;
+		}
+	}
+	
+	/**
+	 * Draw the frame rate.
+	 * @param g
+	 */
+	public void drawFrameRate(Graphics2D g){
+		g.setColor(Color.white);
+		g.drawString("FPS: " + frameRatePerSecond , 10, 10);
 	}
 	
 	/**
@@ -236,6 +271,7 @@ public class Game extends Canvas {
 	 */
 	public void gameLoop() {
 		long lastLoopTime = System.currentTimeMillis();
+		second = lastLoopTime/1000;
 		
 		// keep looping round til the game ends
 		while (gameRunning) {
@@ -250,6 +286,9 @@ public class Game extends Canvas {
 			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 			g.setColor(Color.black);
 			g.fillRect(0,0,800,600);
+			
+			//Check FPS
+			handleFrameRate(lastLoopTime, g);
 			
 			// cycle round asking each entity to move itself
 			if (!waitingForKeyPress) {
@@ -281,6 +320,9 @@ public class Game extends Canvas {
 					}
 				}
 			}
+			
+			// draw frame rate
+			drawFrameRate(g);
 			
 			// remove any entity that has been marked for clear up
 			entities.removeAll(removeList);
@@ -439,7 +481,7 @@ public class Game extends Canvas {
 	 * @param argv The arguments that are passed into our game
 	 */
 	public static void main(String argv[]) {
-		Game g =new Game();
+		Game g = new Game();
 
 		// Start the main game loop, note: this method will not
 		// return until the game has finished running. Hence we are
