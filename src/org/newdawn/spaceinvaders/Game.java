@@ -68,8 +68,8 @@ public class Game extends Canvas {
 	private boolean firePressed = false;
 	/** True if game logic needs to be applied this loop, normally as a result of a game event */
 	private boolean logicRequiredThisLoop = false;
-	/** True if a second has passed and we have to show the frame rate. */
-	private boolean showFrameRate = false;
+	/** True if game is paused */
+	private boolean pausedGame = false;
 	
 	/**
 	 * Construct our game and set it running.
@@ -290,83 +290,94 @@ public class Game extends Canvas {
 			//Check FPS
 			handleFrameRate(lastLoopTime, g);
 			
-			// cycle round asking each entity to move itself
-			if (!waitingForKeyPress) {
-				for (int i=0;i<entities.size();i++) {
-					Entity entity = (Entity) entities.get(i);
-					
-					entity.move(delta);
-				}
-			}
-			
-			// cycle round drawing all the entities we have in the game
-			for (int i=0;i<entities.size();i++) {
-				Entity entity = (Entity) entities.get(i);
-				
-				entity.draw(g);
-			}
-			
-			// brute force collisions, compare every entity against
-			// every other entity. If any of them collide notify 
-			// both entities that the collision has occured
-			for (int p=0;p<entities.size();p++) {
-				for (int s=p+1;s<entities.size();s++) {
-					Entity me = (Entity) entities.get(p);
-					Entity him = (Entity) entities.get(s);
-					
-					if (me.collidesWith(him)) {
-						me.collidedWith(him);
-						him.collidedWith(me);
+			if(!pausedGame){
+				// cycle round asking each entity to move itself
+				if (!waitingForKeyPress) {
+					for (int i=0;i<entities.size();i++) {
+						Entity entity = (Entity) entities.get(i);
+						
+						entity.move(delta);
 					}
 				}
-			}
-			
-			// draw frame rate
-			drawFrameRate(g);
-			
-			// remove any entity that has been marked for clear up
-			entities.removeAll(removeList);
-			removeList.clear();
-
-			// if a game event has indicated that game logic should
-			// be resolved, cycle round every entity requesting that
-			// their personal logic should be considered.
-			if (logicRequiredThisLoop) {
+				
+				// cycle round drawing all the entities we have in the game
 				for (int i=0;i<entities.size();i++) {
 					Entity entity = (Entity) entities.get(i);
-					entity.doLogic();
+					
+					entity.draw(g);
 				}
 				
-				logicRequiredThisLoop = false;
+				// brute force collisions, compare every entity against
+				// every other entity. If any of them collide notify 
+				// both entities that the collision has occured
+				for (int p=0;p<entities.size();p++) {
+					for (int s=p+1;s<entities.size();s++) {
+						Entity me = (Entity) entities.get(p);
+						Entity him = (Entity) entities.get(s);
+						
+						if (me.collidesWith(him)) {
+							me.collidedWith(him);
+							him.collidedWith(me);
+						}
+					}
+				}
+				
+				// draw frame rate
+				drawFrameRate(g);
+				
+				// remove any entity that has been marked for clear up
+				entities.removeAll(removeList);
+				removeList.clear();
+	
+				// if a game event has indicated that game logic should
+				// be resolved, cycle round every entity requesting that
+				// their personal logic should be considered.
+				if (logicRequiredThisLoop) {
+					for (int i=0;i<entities.size();i++) {
+						Entity entity = (Entity) entities.get(i);
+						entity.doLogic();
+					}
+					
+					logicRequiredThisLoop = false;
+				}
+				
+				// if we're waiting for an "any key" press then draw the 
+				// current message 
+				if (waitingForKeyPress) {
+					g.setColor(Color.white);
+					g.drawString(message,(800-g.getFontMetrics().stringWidth(message))/2,250);
+					g.drawString("Press any key",(800-g.getFontMetrics().stringWidth("Press any key"))/2,300);
+				}
+				
+				// finally, we've completed drawing so clear up the graphics
+				// and flip the buffer over
+				g.dispose();
+				strategy.show();
+				
+				// resolve the movement of the ship. First assume the ship 
+				// isn't moving. If either cursor key is pressed then
+				// update the movement appropraitely
+				ship.setHorizontalMovement(0);
+				
+				if ((leftPressed) && (!rightPressed)) {
+					ship.setHorizontalMovement(-moveSpeed);
+				} else if ((rightPressed) && (!leftPressed)) {
+					ship.setHorizontalMovement(moveSpeed);
+				}
+				
+				// if we're pressing fire, attempt to fire
+				if (firePressed) {
+					tryToFire();
+				}
 			}
-			
-			// if we're waiting for an "any key" press then draw the 
-			// current message 
-			if (waitingForKeyPress) {
+			else{
 				g.setColor(Color.white);
-				g.drawString(message,(800-g.getFontMetrics().stringWidth(message))/2,250);
-				g.drawString("Press any key",(800-g.getFontMetrics().stringWidth("Press any key"))/2,300);
-			}
-			
-			// finally, we've completed drawing so clear up the graphics
-			// and flip the buffer over
-			g.dispose();
-			strategy.show();
-			
-			// resolve the movement of the ship. First assume the ship 
-			// isn't moving. If either cursor key is pressed then
-			// update the movement appropraitely
-			ship.setHorizontalMovement(0);
-			
-			if ((leftPressed) && (!rightPressed)) {
-				ship.setHorizontalMovement(-moveSpeed);
-			} else if ((rightPressed) && (!leftPressed)) {
-				ship.setHorizontalMovement(moveSpeed);
-			}
-			
-			// if we're pressing fire, attempt to fire
-			if (firePressed) {
-				tryToFire();
+				g.drawString("Game Paused", (800-g.getFontMetrics().stringWidth("Press P to return"))/2, 300);
+				
+				// finally, we've completed drawing so clear up the graphics
+				// and flip the buffer over
+				g.dispose();
+				strategy.show();
 			}
 			
 			// finally pause for a bit. Note: this should run us at about
@@ -416,6 +427,7 @@ public class Game extends Canvas {
 			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
 				firePressed = true;
 			}
+			
 		} 
 		
 		/**
@@ -467,8 +479,12 @@ public class Game extends Canvas {
 			}
 			
 			// if we hit escape, then quit the game
-			if (e.getKeyChar() == 27) {
+			if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
 				System.exit(0);
+			}
+
+			if(e.getKeyChar() == (char) 80 || e.getKeyChar() ==  112){
+				pausedGame = !pausedGame;
 			}
 		}
 	}
