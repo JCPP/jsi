@@ -10,11 +10,13 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
 import java.util.ArrayList;
+import java.util.Random;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.newdawn.spaceinvaders.entities.AlienEntity;
+import org.newdawn.spaceinvaders.entities.AlienShotEntity;
 import org.newdawn.spaceinvaders.entities.Entity;
 import org.newdawn.spaceinvaders.entities.ShipEntity;
 import org.newdawn.spaceinvaders.entities.ShotEntity;
@@ -152,8 +154,8 @@ public class Game extends Canvas {
 		
 		// create a block of aliens (5 rows, by 12 aliens, spaced evenly)
 		alienCount = 0;
-		for (int row=0;row<5;row++) {
-			for (int x=0;x<12;x++) {
+		for (int row = 0; row < 5; row++) {
+			for (int x = 0; x < 12; x++) {
 				String[] sprites = new String[]{
 						"sprites/alien.gif",
 						"sprites/alien1.gif"
@@ -214,7 +216,7 @@ public class Game extends Canvas {
 		
 		// if there are still some aliens left then they all need to get faster, so
 		// speed up all the existing aliens
-		for (int i=0;i<entities.size();i++) {
+		for (int i = 0; i < entities.size(); i++) {
 			Entity entity = (Entity) entities.get(i);
 			
 			if (entity instanceof AlienEntity) {
@@ -239,6 +241,27 @@ public class Game extends Canvas {
 		lastFire = System.currentTimeMillis();
 		ShotEntity shot = new ShotEntity(this, "sprites/shot.gif", ship.getX() + 10, ship.getY() - 30);
 		entities.add(shot);
+	}
+	
+	/**
+	 * Attempt to fire a shot from all the aliens. Its called "try"
+	 * since we must first check that the alien can fire at this 
+	 * point, i.e. probabilistic calculation
+	 */
+	private void tryToFireAlien() {
+		Random random = new Random();
+		for (int i = 0; i < entities.size(); i++) {
+			Entity entity = (Entity) entities.get(i);
+			
+			if(entity instanceof AlienEntity){
+				
+				if(random.nextInt(1001) == 1000){
+					AlienShotEntity shot = new AlienShotEntity(this, "sprites/alienshot.gif", entity.getX() + 15, entity.getY() + 20);
+					entities.add(shot);
+				}
+			}
+		}
+		
 	}
 	
 	/**
@@ -294,7 +317,7 @@ public class Game extends Canvas {
 			// surface and blank it out
 			Graphics2D g = (Graphics2D) strategy.getDrawGraphics();
 			g.setColor(Color.black);
-			g.fillRect(0,0,800,600);
+			g.fillRect(0, 0, 800, 600);
 			
 			//Check FPS
 			handleFrameRate(lastLoopTime, g);
@@ -310,7 +333,7 @@ public class Game extends Canvas {
 				}
 				
 				// cycle round drawing all the entities we have in the game
-				for (int i=0;i<entities.size();i++) {
+				for (int i = 0; i < entities.size(); i++) {
 					Entity entity = (Entity) entities.get(i);
 					
 					entity.draw(g);
@@ -319,8 +342,8 @@ public class Game extends Canvas {
 				// brute force collisions, compare every entity against
 				// every other entity. If any of them collide notify 
 				// both entities that the collision has occured
-				for (int p=0;p<entities.size();p++) {
-					for (int s=p+1;s<entities.size();s++) {
+				for (int p = 0; p < entities.size(); p++) {
+					for (int s = p + 1; s < entities.size(); s++) {
 						Entity me = (Entity) entities.get(p);
 						Entity him = (Entity) entities.get(s);
 						
@@ -378,6 +401,10 @@ public class Game extends Canvas {
 				if (firePressed) {
 					tryToFire();
 				}
+				
+				if (!waitingForKeyPress) {
+					tryToFireAlien();
+				}
 			}
 			else{
 				g.setColor(Color.white);
@@ -395,7 +422,7 @@ public class Game extends Canvas {
 			try { Thread.sleep(10); } catch (Exception e) {}
 		}
 	}
-	
+
 	/**
 	 * A class to handle keyboard input from the user. The class
 	 * handles both dynamic input during game play, i.e. left/right 
