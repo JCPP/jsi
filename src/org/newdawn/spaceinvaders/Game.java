@@ -14,6 +14,11 @@ import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import org.newdawn.spaceinvaders.entities.AlienEntity;
+import org.newdawn.spaceinvaders.entities.Entity;
+import org.newdawn.spaceinvaders.entities.ShipEntity;
+import org.newdawn.spaceinvaders.entities.ShotEntity;
+
 /**
  * The main hook of our game. This class with both act as a manager
  * for the display and central mediator for the game logic. 

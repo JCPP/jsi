@@ -1,4 +1,6 @@
-package org.newdawn.spaceinvaders;
+package org.newdawn.spaceinvaders.entities;
+
+import org.newdawn.spaceinvaders.Game;
 
 /**
  * The entity that represents the players ship

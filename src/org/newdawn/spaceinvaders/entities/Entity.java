@@ -1,8 +1,11 @@
-package org.newdawn.spaceinvaders;
+package org.newdawn.spaceinvaders.entities;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.util.ArrayList;
+
+import org.newdawn.spaceinvaders.sprite.Sprite;
+import org.newdawn.spaceinvaders.sprite.SpriteStore;
 
 /**
  * An entity represents any element that appears in the game. The

@@ -1,4 +1,6 @@
-package org.newdawn.spaceinvaders;
+package org.newdawn.spaceinvaders.entities;
+
+import org.newdawn.spaceinvaders.Game;
 
 /**
  * An entity which represents one of our space invader aliens.
