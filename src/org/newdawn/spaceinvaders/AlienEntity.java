@@ -4,9 +4,10 @@ package org.newdawn.spaceinvaders;
  * An entity which represents one of our space invader aliens.
  * 
  * @author Kevin Glass
+ * @author Davide Pastore
  */
 public class AlienEntity extends Entity {
-	/** The speed at which the alient moves horizontally */
+	/** The speed at which the alien moves horizontally */
 	private double moveSpeed = 75;
 	/** The game in which the entity exists */
 	private Game game;
@@ -19,7 +20,22 @@ public class AlienEntity extends Entity {
 	 * @param x The intial x location of this alien
 	 * @param y The intial y location of this alient
 	 */
-	public AlienEntity(Game game,String ref,int x,int y) {
+	public AlienEntity(Game game, String ref, int x, int y) {
+		super(ref,x,y);
+		
+		this.game = game;
+		dx = -moveSpeed;
+	}
+	
+	/**
+	 * Create a new alien entity
+	 * 
+	 * @param game The game in which this entity is being created
+	 * @param ref The reference to the images to be displayed for this entity
+ 	 * @param x The initial x location of this entity
+	 * @param y The initial y location of this entity
+	 */
+	public AlienEntity(Game game, String[] ref, int x, int y) {
 		super(ref,x,y);
 		
 		this.game = game;

@@ -2,6 +2,7 @@ package org.newdawn.spaceinvaders;
 
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.util.ArrayList;
 
 /**
  * An entity represents any element that appears in the game. The
@@ -15,6 +16,7 @@ import java.awt.Rectangle;
  * accuracy as we move.
  * 
  * @author Kevin Glass
+ * @author Davide Pastore
  */
 public abstract class Entity {
 	/** The current x location of this entity */ 
@@ -22,7 +24,9 @@ public abstract class Entity {
 	/** The current y location of this entity */
 	protected double y;
 	/** The sprite that represents this entity */
-	protected Sprite sprite;
+	protected ArrayList<Sprite> sprite = new ArrayList<Sprite>();
+	/** The sprite index */
+	private int spriteIndex = 0;
 	/** The current speed of this entity horizontally (pixels/sec) */
 	protected double dx;
 	/** The current speed of this entity vertically (pixels/sec) */
@@ -31,6 +35,10 @@ public abstract class Entity {
 	private Rectangle me = new Rectangle();
 	/** The rectangle used for other entities during collision resolution */
 	private Rectangle him = new Rectangle();
+	/** The number of milliseconds to display each sprite */
+	private int timeSpriteChange = 1000;
+	/** The number of milliseconds (time spent) */
+	private long timeSpent = System.currentTimeMillis();
 	
 	/**
 	 * Construct a entity based on a sprite image and a location.
@@ -40,7 +48,22 @@ public abstract class Entity {
 	 * @param y The initial y location of this entity
 	 */
 	public Entity(String ref,int x,int y) {
-		this.sprite = SpriteStore.get().getSprite(ref);
+		this.sprite.add(SpriteStore.get().getSprite(ref));
+		this.x = x;
+		this.y = y;
+	}
+	
+	/**
+	 * Construct a entity based on a list of sprite images and a location.
+	 * 
+	 * @param ref The reference to the images to be displayed for this entity
+ 	 * @param x The initial x location of this entity
+	 * @param y The initial y location of this entity
+	 */
+	public Entity(String[] ref, int x, int y) {
+		for(int i = 0; i < ref.length; i++){
+			this.sprite.add(SpriteStore.get().getSprite(ref[i]));
+		}
 		this.x = x;
 		this.y = y;
 	}
@@ -99,7 +122,17 @@ public abstract class Entity {
 	 * @param g The graphics context on which to draw
 	 */
 	public void draw(Graphics g) {
-		sprite.draw(g,(int) x,(int) y);
+		if(System.currentTimeMillis() >= timeSpriteChange + timeSpent ){
+			timeSpent = System.currentTimeMillis();
+			if(spriteIndex + 1 == sprite.size() ){
+				spriteIndex = 0;
+			}
+			else{
+				spriteIndex++;
+			}
+		}
+		
+		sprite.get(spriteIndex).draw(g,(int) x,(int) y);
 	}
 	
 	/**
@@ -127,6 +160,16 @@ public abstract class Entity {
 		return (int) y;
 	}
 	
+	
+	/**
+	 * Get the sprite index of this entity
+	 * 
+	 * @return The sprite index of this entity
+	 */
+	public int getSpriteIndex(){
+		return spriteIndex;
+	}
+	
 	/**
 	 * Check if this entity collised with another.
 	 * 
@@ -134,8 +177,8 @@ public abstract class Entity {
 	 * @return True if the entities collide with each other
 	 */
 	public boolean collidesWith(Entity other) {
-		me.setBounds((int) x,(int) y,sprite.getWidth(),sprite.getHeight());
-		him.setBounds((int) other.x,(int) other.y,other.sprite.getWidth(),other.sprite.getHeight());
+		me.setBounds((int) x, (int) y, sprite.get(spriteIndex).getWidth(), sprite.get(spriteIndex).getHeight());
+		him.setBounds((int) other.x, (int) other.y, other.sprite.get(other.getSpriteIndex()).getWidth(), other.sprite.get(other.getSpriteIndex()).getHeight());
 
 		return me.intersects(him);
 	}
