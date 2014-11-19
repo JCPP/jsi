@@ -4,8 +4,6 @@ import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.image.BufferStrategy;
@@ -67,6 +65,8 @@ public class Game extends Canvas {
 	private String message = "";
 	/** True if we're holding up game play until a key has been pressed */
 	private boolean waitingForKeyPress = true;
+
+
 	/** True if the left cursor key is currently pressed */
 	private boolean leftPressed = false;
 	/** True if the right cursor key is currently pressed */
@@ -113,7 +113,7 @@ public class Game extends Canvas {
 		
 		// add a key input system (defined below) to our canvas
 		// so we can respond to key pressed
-		addKeyListener(new KeyInputHandler());
+		addKeyListener(new KeyInputHandler(this));
 		
 		// request the focus so key events come to us
 		requestFocus();
@@ -132,7 +132,7 @@ public class Game extends Canvas {
 	 * Start a fresh game, this should clear out any old data and
 	 * create a new set.
 	 */
-	private void startGame() {
+	public void startGame() {
 		// clear out any existing entities and intialise a new set
 		entities.clear();
 		initEntities();
@@ -422,109 +422,77 @@ public class Game extends Canvas {
 			try { Thread.sleep(10); } catch (Exception e) {}
 		}
 	}
+	
+	/**
+	 * @return the waitingForKeyPress
+	 */
+	public boolean isWaitingForKeyPress() {
+		return waitingForKeyPress;
+	}
 
 	/**
-	 * A class to handle keyboard input from the user. The class
-	 * handles both dynamic input during game play, i.e. left/right 
-	 * and shoot, and more static type input (i.e. press any key to
-	 * continue)
-	 * 
-	 * This has been implemented as an inner class more through 
-	 * habbit then anything else. Its perfectly normal to implement
-	 * this as seperate class if slight less convienient.
-	 * 
-	 * @author Kevin Glass
+	 * @param waitingForKeyPress the waitingForKeyPress to set
 	 */
-	private class KeyInputHandler extends KeyAdapter {
-		/** The number of key presses we've had while waiting for an "any key" press */
-		private int pressCount = 1;
-		
-		/**
-		 * Notification from AWT that a key has been pressed. Note that
-		 * a key being pressed is equal to being pushed down but *NOT*
-		 * released. Thats where keyTyped() comes in.
-		 *
-		 * @param e The details of the key that was pressed 
-		 */
-		public void keyPressed(KeyEvent e) {
-			// if we're waiting for an "any key" typed then we don't 
-			// want to do anything with just a "press"
-			if (waitingForKeyPress) {
-				return;
-			}
-			
-			
-			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-				leftPressed = true;
-			}
-			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				rightPressed = true;
-			}
-			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-				firePressed = true;
-			}
-			
-		} 
-		
-		/**
-		 * Notification from AWT that a key has been released.
-		 *
-		 * @param e The details of the key that was released 
-		 */
-		public void keyReleased(KeyEvent e) {
-			// if we're waiting for an "any key" typed then we don't 
-			// want to do anything with just a "released"
-			if (waitingForKeyPress) {
-				return;
-			}
-			
-			if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-				leftPressed = false;
-			}
-			if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-				rightPressed = false;
-			}
-			if (e.getKeyCode() == KeyEvent.VK_SPACE) {
-				firePressed = false;
-			}
-		}
-
-		/**
-		 * Notification from AWT that a key has been typed. Note that
-		 * typing a key means to both press and then release it.
-		 *
-		 * @param e The details of the key that was typed. 
-		 */
-		public void keyTyped(KeyEvent e) {
-			// if we're waiting for a "any key" type then
-			// check if we've recieved any recently. We may
-			// have had a keyType() event from the user releasing
-			// the shoot or move keys, hence the use of the "pressCount"
-			// counter.
-			if (waitingForKeyPress) {
-				if (pressCount == 1) {
-					// since we've now recieved our key typed
-					// event we can mark it as such and start 
-					// our new game
-					waitingForKeyPress = false;
-					startGame();
-					pressCount = 0;
-				} else {
-					pressCount++;
-				}
-			}
-			
-			// if we hit escape, then quit the game
-			if (e.getKeyChar() == KeyEvent.VK_ESCAPE) {
-				System.exit(0);
-			}
-
-			if(e.getKeyChar() == (char) 80 || e.getKeyChar() ==  112){
-				pausedGame = !pausedGame;
-			}
-		}
+	public void setWaitingForKeyPress(boolean waitingForKeyPress) {
+		this.waitingForKeyPress = waitingForKeyPress;
 	}
 	
+	/**
+	 * @return the leftPressed
+	 */
+	public boolean isLeftPressed() {
+		return leftPressed;
+	}
+
+	/**
+	 * @param leftPressed the leftPressed to set
+	 */
+	public void setLeftPressed(boolean leftPressed) {
+		this.leftPressed = leftPressed;
+	}
+
+	/**
+	 * @return the rightPressed
+	 */
+	public boolean isRightPressed() {
+		return rightPressed;
+	}
+
+	/**
+	 * @param rightPressed the rightPressed to set
+	 */
+	public void setRightPressed(boolean rightPressed) {
+		this.rightPressed = rightPressed;
+	}
+
+	/**
+	 * @return the pausedGame
+	 */
+	public boolean isPausedGame() {
+		return pausedGame;
+	}
+
+	/**
+	 * @param pausedGame the pausedGame to set
+	 */
+	public void setPausedGame(boolean pausedGame) {
+		this.pausedGame = pausedGame;
+	}
+
+	/**
+	 * @return the firePressed
+	 */
+	public boolean isFirePressed() {
+		return firePressed;
+	}
+
+	/**
+	 * @param firePressed the firePressed to set
+	 */
+	public void setFirePressed(boolean firePressed) {
+		this.firePressed = firePressed;
+	}
+
 	/**
 	 * The entry point into the game. We'll simply create an
 	 * instance of class which will start the display and game
